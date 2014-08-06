@@ -70,8 +70,10 @@ class NameStore(object):
         query = self.__getquery__(name)
         return self.collection.find_one(query)
     
-    def addNameLink(self, nameNode, node):
-        self.collection.update({'_id':nameNode['_id']}, { '$addToSet': { 'name': node['_id'] } } )
+    def addNameLink(self, nameNode, node, nameKey):
+        if None == nameKey or None == nameNode or None == node:
+            return
+        self.collection.update({'_id':nameNode['_id']}, { '$addToSet': { nameKey: node['_id'] } } )
 
 if __name__ == '__main__':
     pass

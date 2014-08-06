@@ -10,6 +10,7 @@ from bson.objectid import ObjectId
 from src.store.Exception.storeError import ClassNodeError, NameNodeError,\
     ObjectNodeError, PropertyNodeError, ValueNodeError
 from src.store.propertyStore import PropertyStore
+from src.store.constants import OBJECT_NAME_KEY
 
 class ObjectNodeStore(object):
     '''
@@ -36,7 +37,7 @@ class ObjectNodeStore(object):
         try:
             objNodeId =  self.collection.insert({'nameNodeId':nameNode['_id'], 'typeId':classNode['_id']})
             objNode = {'_id':ObjectId(objNodeId), 'typeId':classNode['_id']}
-            self.nameStore.addNameLink(nameNode=nameNode, node=objNode)
+            self.nameStore.addNameLink(nameNode=nameNode, node=objNode, OBJECT_NAME_KEY)
             return objNode
         except DuplicateKeyError:
             return self.getClassNode(objName)

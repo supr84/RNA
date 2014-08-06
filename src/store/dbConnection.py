@@ -9,12 +9,13 @@ class DBConnection(object):
     '''
     classdocs
     '''
-    def __init__(self, params):
+    def __init__(self, dbName):
         '''
         Constructor
         '''
+        self.__dbName__ = dbName
         self.client = MongoClient('localhost', 27017)
-        self.db = self.client.graphite
+        self.db = self.client[dbName]
         self.__ensureIndex__(self.db)
 
     def __ensureIndex__(self, db):
@@ -40,7 +41,7 @@ class DBConnection(object):
         return self.db
     
     def dropDatabase(self):
-        self.client.drop_database('graphite')
+        self.client.drop_database(self.__dbName__)
 
 if __name__ == '__main__':
     pass
