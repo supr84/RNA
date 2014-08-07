@@ -3,8 +3,10 @@ Created on Aug 4, 2014
 
 @author: sush
 '''
-from pymongo.errors import DuplicateKeyError
 from bson.objectid import ObjectId
+from pymongo.errors import DuplicateKeyError
+from src.store.constants import CLASS_NAME_KEY, PROP_NAME_KEY, OBJECT_NAME_KEY, \
+    UPDATED_EXISTING_KEY, NAME_NODE_COLLECTION
 from src.store.stringStore import StringStore
 
 class NameStore(object):
@@ -17,7 +19,7 @@ class NameStore(object):
         Constructor
         '''
         dbConn = params
-        self.collection = dbConn.getDatabase().nameNodes
+        self.collection = dbConn.getDatabase()[NAME_NODE_COLLECTION]
         self.stringStore = StringStore(dbConn)
     
     def __getquery__(self, name, createMissingTokens = False):
@@ -64,16 +66,19 @@ class NameStore(object):
         return name.strip()
 
     def getNameNodeById(self, nameNodeId):
-        return self.collection.find_one({'_id':nameNodeId})
+        return self.collection.find_one({'_id':nameNodeId},
+                                        {CLASS_NAME_KEY:1, PROP_NAME_KEY:1, OBJECT_NAME_KEY:1})
 
     def getNameNode(self, name):
         query = self.__getquery__(name)
-        return self.collection.find_one(query)
+        return self.collection.find_one(query,
+                                        {CLASS_NAME_KEY:1, PROP_NAME_KEY:1, OBJECT_NAME_KEY:1})
     
-    def addNameLink(self, nameNode, node, nameKey):
-        if None == nameKey or None == nameNode or None == node:
+    def addNameLink(self, nameNodeId, nodeId, nameKey):
+        if None == nameKey or None == nameNodeId or None == nodeId:
             return
-        self.collection.update({'_id':nameNode['_id']}, { '$addToSet': { nameKey: node['_id'] } } )
+        updated = self.collection.update({'_id':nameNodeId}, { '$addToSet': { nameKey: nodeId } } )
+        return updated[UPDATED_EXISTING_KEY]
 
 if __name__ == '__main__':
     pass

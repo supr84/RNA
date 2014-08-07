@@ -3,6 +3,10 @@ Created on Aug 6, 2014
 
 @author: sush
 '''
+CLASS_NODE_COLLECTION = 'classNodes'
+NAME_NODE_COLLECTION = 'nameNodes'
+PROPERTY_NODE_COLLECTION = 'propNodes'
+OBJECT_NODE_COLLECTION = 'objNodes'
 IS_PRIVATE_KEY = 'isPrivate'
 VIEWERS_KEY = 'viewers'
 DOMAIN_KEY = 'domain'
@@ -15,3 +19,4 @@ PROP_NAME_KEY = 'propName'
 CLASS_NAME_KEY = 'className'
 OBJECT_NAME_KEY = 'objectName'
 UPDATED_EXISTING_KEY = 'updatedExisting'
+USER_SECRET_KEY = 'secret'

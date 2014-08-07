@@ -3,8 +3,9 @@ Created on Aug 4, 2014
 
 @author: sush
 '''
-from pymongo import MongoClient
-from pymongo import ASCENDING
+from pymongo import ASCENDING, MongoClient
+from src.store.constants import IS_PRIVATE_KEY, NAME_NODE_ID_KEY, USER_NAME_KEY, \
+    NAME_KEY, OWNER_KEY
 class DBConnection(object):
     '''
     classdocs
@@ -20,22 +21,22 @@ class DBConnection(object):
 
     def __ensureIndex__(self, db):
         stringNodes = db.stringNodes
-        stringNodes.create_index([("name", ASCENDING)], unique=True)
+        stringNodes.create_index([(NAME_KEY, ASCENDING)], unique=True)
         
         classNodes = db.classNodes
-        classNodes.create_index([("nameNodeId", ASCENDING)], unique=True)
+        classNodes.create_index([(NAME_NODE_ID_KEY, ASCENDING)], unique=True)
         
         propNodes = db.propNodes
-        propNodes.create_index([("nameNodeId", ASCENDING)], unique=True)
+        propNodes.create_index([(NAME_NODE_ID_KEY, ASCENDING)], unique=True)
         
         userNodes = db.userNodes
-        userNodes.create_index([("username", ASCENDING)], unique=True)
+        userNodes.create_index([(USER_NAME_KEY, ASCENDING)], unique=True)
 
         nameNodes = db.nameNodes
         nameNodes.create_index([("pos_1", ASCENDING), ("pos_2", ASCENDING), ("pos_3", ASCENDING)], unique=True)
         
         objNodes = db.objNodes
-        objNodes.create_index([("nameNodeId", ASCENDING), ("typeId", ASCENDING)], unique=True)
+        objNodes.create_index([(NAME_NODE_ID_KEY, ASCENDING), ("typeId", ASCENDING)], unique=True)
         
     def getDatabase(self):
         return self.db
