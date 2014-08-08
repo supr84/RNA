@@ -24,9 +24,6 @@ class PropertyStore(object):
         self.classNodes = dbConn.getDatabase()[CLASS_NODE_COLLECTION]
         self.nameStore = NameStore(dbConn)
 
-    def setClassStore(self, classStore):
-        self.classStore = classStore
-
     def __getNameNode__(self, propName):
         name = propName.lower()
         tokens = name.split()
@@ -45,8 +42,8 @@ class PropertyStore(object):
         return False
 
     def createPropertyNode(self, propName, domainClassNode, rangeClassNode):
-        domainClassNode = self.classStore.getClassNode(domainClassNode.get(ID_KEY))
-        rangeClassNode = self.classStore.getClassNode(rangeClassNode.get(ID_KEY))
+        domainClassNode = self.publicClassStore.getClassNode(domainClassNode.get(ID_KEY))
+        rangeClassNode = self.publicClassStore.getClassNode(rangeClassNode.get(ID_KEY))
         if None == domainClassNode or None == rangeClassNode:
             return None
         nameNode = self.__getNameNode__(propName)
@@ -69,13 +66,13 @@ class PropertyStore(object):
     def addDomain(self, propNode, domainClassNode):
         if None == propNode or None == domainClassNode:
             return False
-        domainClassNode = self.classStore.getClassNode(domainClassNode[ID_KEY])
+        domainClassNode = self.publicClassStore.getClassNode(domainClassNode[ID_KEY])
         if None == domainClassNode:
             return False
         updated = self.propNodes.update({ID_KEY:propNode[ID_KEY],
                                          OWNER_KEY: {'$exists':False}},
                                         { '$addToSet': { DOMAIN_KEY: domainClassNode[ID_KEY] } })
-        self.classStore.addDomain(classNode=domainClassNode,
+        self.publicClassStore.addDomain(classNode=domainClassNode,
                                   propNode=propNode)
         return updated[UPDATED_EXISTING_KEY]
 

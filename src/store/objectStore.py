@@ -27,6 +27,9 @@ class ObjectNodeStore(object):
         self.propStore = PropertyStore(dbConn)
 
     def createObjectNode(self, objName, classNode):
+        if None == objName or None == classNode:
+            return
+        classNode = self.classStore.getClassNode(classNode.get(ID_KEY))
         nameNode = self.nameStore.getNameNode(objName)
         if None == nameNode:
             nameNode = self.nameStore.createNameNode(objName)

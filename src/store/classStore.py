@@ -20,9 +20,6 @@ class ClassStore(object):
         '''
         self.collection = dbConn.getDatabase().classNodes
         self.nameStore = NameStore(dbConn)
-    
-    def setPropStore(self, propStore):
-        self.propStore = propStore
 
     def __getNameNode__(self, className):
         #first letter of class should be capital letters
@@ -54,7 +51,7 @@ class ClassStore(object):
                                          RANGE_KEY:1})
     
     def addDomain(self, classNode, propNode):
-        propNode = self.propStore.getPropertyNode(propNode[ID_KEY])
+        propNode = self.publicPropStore.getPropertyNode(propNode[ID_KEY])
         if None == propNode:
             return False
         updated = self.collection.update({ID_KEY:classNode[ID_KEY],
@@ -63,7 +60,7 @@ class ClassStore(object):
         return updated[UPDATED_EXISTING_KEY]
 
     def addRange(self, classNode, propNode):
-        propNode = self.propStore.getPropertyNode(propNode[ID_KEY])
+        propNode = self.publicPropStore.getPropertyNode(propNode[ID_KEY])
         if None == propNode:
             return False
         updated = self.collection.update({ID_KEY:classNode[ID_KEY],

@@ -5,7 +5,8 @@ Created on Aug 8, 2014
 '''
 from src.store.classStore import ClassStore
 from src.store.constants import USER_NAME_KEY, USER_SECRET_KEY, CLASS_STORE_TYPE, \
-    PROP_STORE_TYPE
+    PROP_STORE_TYPE, PUBLIC_PROP_STORE, PUBLIC_CLASS_STORE, PRIVATE_PROP_STORE, \
+    PRIVATE_CLASS_STORE
 from src.store.propertyStore import PropertyStore
 import imp
 
@@ -34,8 +35,8 @@ class StoreFactory(object):
         
         pcs = self.__loadStore__(userNode, CLASS_STORE_TYPE)
         pps = self.__loadStore__(userNode, PROP_STORE_TYPE)
-        pcs.__setattr__('privatePropStore', pps)
-        pps.__setattr__('privateClassStore', pcs)
+        pcs.__setattr__(PRIVATE_PROP_STORE, pps)
+        pps.__setattr__(PRIVATE_CLASS_STORE, pcs)
 #        
         self.userClassStores[userNode[USER_NAME_KEY]] = pcs
         self.userPropStores[userNode[USER_NAME_KEY]] = pps
@@ -47,8 +48,8 @@ class StoreFactory(object):
         self.dbConn = dbConn
         self.publicClassStore = ClassStore(dbConn)
         self.publicPropertyStore = PropertyStore(dbConn)
-        self.publicClassStore.setPropStore(self.publicPropertyStore)
-        self.publicPropertyStore.setClassStore(self.publicClassStore)
+        self.publicClassStore.__setattr__(PUBLIC_PROP_STORE, self.publicPropertyStore)
+        self.publicPropertyStore.__setattr__(PUBLIC_CLASS_STORE, self.publicClassStore)
         self.privateStoreSourcePath = sourcePath
         self.userClassStores = {}
         self.userPropStores = {}
@@ -56,7 +57,7 @@ class StoreFactory(object):
         
     def getPublicObjectStore(self):
         pass
-    
+
     def getPrivateClassStore(self, userNode):
         if not self.userClassStores.has_key(userNode[USER_NAME_KEY]):
             self.__loadPrivateStore__(userNode)
