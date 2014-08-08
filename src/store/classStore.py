@@ -41,7 +41,7 @@ class ClassStore(object):
                                    nodeId=classNode[ID_KEY],
                                    nameKey=CLASS_NAME_KEY)
         return classNode
-    
+
     def getClassNode(self, classNodeId):
         if None == classNodeId:
             return None
@@ -49,7 +49,7 @@ class ClassStore(object):
                                         {NAME_NODE_ID_KEY:1,
                                          DOMAIN_KEY:1,
                                          RANGE_KEY:1})
-    
+
     def addDomain(self, classNode, propNode):
         propNode = self.publicPropStore.getPropertyNode(propNode[ID_KEY])
         if None == propNode:

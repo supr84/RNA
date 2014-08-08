@@ -5,7 +5,6 @@ Created on Aug 4, 2014
 '''
 from bson.objectid import ObjectId
 from src.store.Exception.storeError import ClassNodeError
-from src.store.classStore import ClassStore
 from src.store.constants import DOMAIN_KEY, RANGE_KEY, NAME_NODE_ID_KEY, \
     OWNER_KEY, UPDATED_EXISTING_KEY, PROPERTY_NODE_COLLECTION, PROP_NAME_KEY, ID_KEY, \
     USER_SECRET_KEY, NAME_NODE_COLLECTION
@@ -27,7 +26,6 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__PropertyStore(object):
             raise SecurityBreachError('sorry you are not allowed to instantiate this class', userName)
         self.propNodes = dbConn.getDatabase()[PROPERTY_NODE_COLLECTION]
         self.nameNodes = dbConn.getDatabase()[NAME_NODE_COLLECTION]
-        self.classStore = ClassStore(dbConn)
         self.nameStore = NameStore(dbConn)
         self.userDomainLink = "%s%s" % (self.USER_SECRET, DOMAIN_KEY)
         self.userRangeLink = "%s%s" % (self.USER_SECRET, RANGE_KEY)

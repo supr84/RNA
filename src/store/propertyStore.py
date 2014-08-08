@@ -34,13 +34,6 @@ class PropertyStore(object):
             nameNode = self.nameStore.createNameNode(name)
         return nameNode
 
-    def __updateClassLinks__(self, classNodeId, propNodeId):
-        domainUpdated = self.classNodes.update({ID_KEY:classNodeId, OWNER_KEY: {'$exists':False}}, { '$addToSet': {  DOMAIN_KEY: propNodeId } })
-        if domainUpdated[UPDATED_EXISTING_KEY]:
-            rangeUpdated = self.classNodes.update({ID_KEY:classNodeId, OWNER_KEY: {'$exists':False}}, { '$addToSet': {  RANGE_KEY: propNodeId } })
-            return rangeUpdated[UPDATED_EXISTING_KEY]
-        return False
-
     def createPropertyNode(self, propName, domainClassNode, rangeClassNode):
         domainClassNode = self.publicClassStore.getClassNode(domainClassNode.get(ID_KEY))
         rangeClassNode = self.publicClassStore.getClassNode(rangeClassNode.get(ID_KEY))
@@ -49,13 +42,11 @@ class PropertyStore(object):
         nameNode = self.__getNameNode__(propName)
         propertyNode = {NAME_NODE_ID_KEY:nameNode[ID_KEY],
                         RANGE_KEY:rangeClassNode[ID_KEY],
-                        DOMAIN_KEY:[domainClassNode[ID_KEY],]}
+                        DOMAIN_KEY:[domainClassNode[ID_KEY], ]}
         propNodeId = self.propNodes.insert(propertyNode)
         propertyNode[ID_KEY] = ObjectId(propNodeId)
-        
-        self.__updateClassLinks__(classNodeId=domainClassNode[ID_KEY],
-                             propNodeId=propertyNode[ID_KEY])
-
+        self.publicClassStore.addDomain(domainClassNode, propertyNode)
+        self.publicClassStore.addRange(rangeClassNode, propertyNode)
         return propertyNode
 
     def getPropertyNode(self, propNodeId):
@@ -72,8 +63,6 @@ class PropertyStore(object):
         updated = self.propNodes.update({ID_KEY:propNode[ID_KEY],
                                          OWNER_KEY: {'$exists':False}},
                                         { '$addToSet': { DOMAIN_KEY: domainClassNode[ID_KEY] } })
-        self.publicClassStore.addDomain(classNode=domainClassNode,
-                                  propNode=propNode)
         return updated[UPDATED_EXISTING_KEY]
 
     def addValLink(self, nameNodeId, valNodeId):
