@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 from src.store.Exception.storeError import PropertyNodeError
 from src.store.constants import DOMAIN_KEY, RANGE_KEY, NAME_NODE_ID_KEY, \
     PROP_NAME_KEY, UPDATED_EXISTING_KEY, OWNER_KEY, PROPERTY_NODE_COLLECTION, \
-    CLASS_NODE_COLLECTION, ID_KEY
+    CLASS_NODE_COLLECTION, ID_KEY, PROP_VALUE_KEY
 from src.store.nameStore import NameStore
 
 class PropertyStore(object):
@@ -87,5 +87,5 @@ class PropertyStore(object):
         for name in names:
             propNode = self.propNodes.find_one({ID_KEY:name})
             if None != propNode:
-                self.propNodes.update({ID_KEY:propNode[ID_KEY]}, { '$addToSet': { 'val':valNodeId } })
+                self.propNodes.update({ID_KEY:propNode[ID_KEY]}, { '$addToSet': { PROP_VALUE_KEY: valNodeId } })
                 return True

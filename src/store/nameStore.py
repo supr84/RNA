@@ -21,7 +21,7 @@ class NameStore(object):
         dbConn = params
         self.collection = dbConn.getDatabase()[NAME_NODE_COLLECTION]
         self.stringStore = StringStore(dbConn)
-    
+
     def __getquery__(self, name, createMissingTokens = False):
         tokens = name.split()
         #TODO: parallelize it
@@ -39,7 +39,7 @@ class NameStore(object):
                 query["pos_%s"%(pos)] = stringNode['_id']
             query['length'] = pos
         return query
-    
+
     def createNameNode(self, name):
         query = self.__getquery__(name, True)
         try:
@@ -73,12 +73,9 @@ class NameStore(object):
         query = self.__getquery__(name)
         return self.collection.find_one(query,
                                         {CLASS_NAME_KEY:1, PROP_NAME_KEY:1, OBJECT_NAME_KEY:1})
-    
+
     def addNameLink(self, nameNodeId, nodeId, nameKey):
         if None == nameKey or None == nameNodeId or None == nodeId:
             return
         updated = self.collection.update({'_id':nameNodeId}, { '$addToSet': { nameKey: nodeId } } )
         return updated[UPDATED_EXISTING_KEY]
-
-if __name__ == '__main__':
-    pass

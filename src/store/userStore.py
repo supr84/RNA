@@ -40,7 +40,4 @@ class USerStore(object):
         tokens = name.split()
         if len(tokens) != 1:
             raise UserNodeError('user node name should not contain white spaces', name)
-        return self.getUserNodeCollection().find_one({'username':name}, {USER_NAME_KEY:1, USER_SECRET_KEY:1})
-    
-if __name__ == '__main__':
-    pass
+        return self.getUserNodeCollection().find_one({USER_NAME_KEY: name}, {USER_NAME_KEY:1, USER_SECRET_KEY:1})
