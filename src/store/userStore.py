@@ -29,7 +29,9 @@ class USerStore(object):
             raise UserNodeError('user node name should not contain white spaces', name)
         try:
             nodeId =  self.getUserNodeCollection().insert({USER_NAME_KEY:name, USER_SECRET_KEY:secret})
-            return self.getUserNodeCollection().find_one({'_id':ObjectId(nodeId)}, {'username':1})
+            return self.getUserNodeCollection().find_one({'_id':ObjectId(nodeId)},
+                                                         {USER_NAME_KEY:1,
+                                                          USER_SECRET_KEY:1})
         except DuplicateKeyError:
             return self.getUserNode(username)
 

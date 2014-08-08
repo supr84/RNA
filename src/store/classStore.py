@@ -6,12 +6,12 @@ Created on Aug 4, 2014
 from bson.objectid import ObjectId
 from src.store.Exception.storeError import ClassNodeError
 from src.store.constants import DOMAIN_KEY, RANGE_KEY, NAME_NODE_ID_KEY, \
-    CLASS_NAME_KEY, OWNER_KEY, UPDATED_EXISTING_KEY
+    CLASS_NAME_KEY, OWNER_KEY, UPDATED_EXISTING_KEY, ID_KEY
 from src.store.nameStore import NameStore
 
 class ClassStore(object):
     '''
-    classdocs
+    Use StoreFactory to get instance of this class, bypassing that might result in unpredictable results.
     '''
 
     def __init__(self, dbConn):
@@ -21,6 +21,9 @@ class ClassStore(object):
         self.collection = dbConn.getDatabase().classNodes
         self.nameStore = NameStore(dbConn)
     
+    def setPropStore(self, propStore):
+        self.propStore = propStore
+
     def __getNameNode__(self, className):
         #first letter of class should be capital letters
         name = className.title()
@@ -35,23 +38,35 @@ class ClassStore(object):
     def createClassNode(self, className):
         nameNode = self.__getNameNode__(className)
 
-        classNodeId =  self.collection.insert({NAME_NODE_ID_KEY:nameNode['_id']})
-        classNode = {'_id':ObjectId(classNodeId), NAME_NODE_ID_KEY:nameNode['_id']}
-        self.nameStore.addNameLink(nameNodeId=nameNode['_id'],
-                                   nodeId=classNode['_id'],
+        classNodeId =  self.collection.insert({NAME_NODE_ID_KEY:nameNode[ID_KEY]})
+        classNode = {ID_KEY:ObjectId(classNodeId), NAME_NODE_ID_KEY:nameNode[ID_KEY]}
+        self.nameStore.addNameLink(nameNodeId=nameNode[ID_KEY],
+                                   nodeId=classNode[ID_KEY],
                                    nameKey=CLASS_NAME_KEY)
         return classNode
     
     def getClassNode(self, classNodeId):
         if None == classNodeId:
             return None
-        return self.collection.find_one({'_id':classNodeId, OWNER_KEY: {'$exists':False}})
+        return self.collection.find_one({ID_KEY:classNodeId, OWNER_KEY: {'$exists':False}},
+                                        {NAME_NODE_ID_KEY:1,
+                                         DOMAIN_KEY:1,
+                                         RANGE_KEY:1})
     
-    #TODO:should we not check if this is indeed a prop_node and a public prop
-    def addDomain(self, classNode, propNode, domainKey=DOMAIN_KEY):
-        updated = self.collection.update({'_id':classNode['_id'], OWNER_KEY: {'$exists':False}}, { '$addToSet': {  domainKey: propNode['_id'] } })
+    def addDomain(self, classNode, propNode):
+        propNode = self.propStore.getPropertyNode(propNode[ID_KEY])
+        if None == propNode:
+            return False
+        updated = self.collection.update({ID_KEY:classNode[ID_KEY],
+                                          OWNER_KEY: {'$exists':False}},
+                                         { '$addToSet': {  DOMAIN_KEY: propNode[ID_KEY] } })
         return updated[UPDATED_EXISTING_KEY]
 
-    def addRange(self, classNode, propNode, rangeKey=RANGE_KEY):
-        updated = self.collection.update({'_id':classNode['_id'], OWNER_KEY: {'$exists':False}}, { '$addToSet': {  rangeKey: propNode['_id'] } })
+    def addRange(self, classNode, propNode):
+        propNode = self.propStore.getPropertyNode(propNode[ID_KEY])
+        if None == propNode:
+            return False
+        updated = self.collection.update({ID_KEY:classNode[ID_KEY],
+                                          OWNER_KEY: {'$exists':False}},
+                                         { '$addToSet': {  RANGE_KEY: propNode[ID_KEY] } })
         return updated[UPDATED_EXISTING_KEY]

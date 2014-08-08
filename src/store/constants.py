@@ -3,6 +3,7 @@ Created on Aug 6, 2014
 
 @author: sush
 '''
+ID_KEY = '_id'
 CLASS_NODE_COLLECTION = 'classNodes'
 NAME_NODE_COLLECTION = 'nameNodes'
 PROPERTY_NODE_COLLECTION = 'propNodes'
@@ -20,3 +21,5 @@ CLASS_NAME_KEY = 'className'
 OBJECT_NAME_KEY = 'objectName'
 UPDATED_EXISTING_KEY = 'updatedExisting'
 USER_SECRET_KEY = 'secret'
+CLASS_STORE_TYPE = 'ClassStore'
+PROP_STORE_TYPE = 'PropertyStore'
