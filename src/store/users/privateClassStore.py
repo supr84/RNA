@@ -1,7 +1,7 @@
 '''
 Created on Aug 4, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 from bson.objectid import ObjectId
 from src.store.Exception.storeError import ClassNodeError

@@ -1,7 +1,7 @@
 '''
 Created on Aug 5, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 from src.store.stringStore import StringStore
 from src.store.dbConnection import DBConnection

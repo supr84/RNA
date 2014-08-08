@@ -1,7 +1,7 @@
 '''
 Created on Aug 4, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 from pymongo import ASCENDING, MongoClient
 from src.store.constants import NAME_NODE_ID_KEY, USER_NAME_KEY, NAME_KEY,\

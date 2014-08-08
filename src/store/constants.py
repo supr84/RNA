@@ -1,7 +1,7 @@
 '''
 Created on Aug 6, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 ID_KEY = '_id'
 CLASS_NODE_COLLECTION = 'classNodes'

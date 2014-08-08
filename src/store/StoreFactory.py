@@ -1,7 +1,7 @@
 '''
 Created on Aug 8, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 from src.store.classStore import ClassStore
 from src.store.constants import USER_NAME_KEY, USER_SECRET_KEY, CLASS_STORE_TYPE, \

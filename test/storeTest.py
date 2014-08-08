@@ -1,7 +1,7 @@
 '''
 Created on Aug 4, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 import unittest
 from src.store.classStore import ClassStore

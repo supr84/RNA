@@ -1,7 +1,7 @@
 '''
 Created on Aug 5, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 import time
 from src.store.dbConnection import DBConnection

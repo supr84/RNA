@@ -1,7 +1,7 @@
 '''
 Created on Aug 6, 2014
 
-@author: sush
+@author: sushant pradhan
 '''
 from pymongo.mongo_client import MongoClient
 from src.store.StoreFactory import StoreFactory
