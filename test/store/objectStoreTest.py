@@ -7,7 +7,7 @@ from pymongo.mongo_client import MongoClient
 from src.store.StoreFactory import StoreFactory
 from src.store.dbConnection import DBConnection
 import unittest
-from src.store.constants import ID_KEY, NAME_NODE_ID_KEY
+from src.store.constants import ID_KEY
 from src.store.userStore import UserStore
 
 class ObjectStoreTest(unittest.TestCase):
