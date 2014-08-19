@@ -20,7 +20,7 @@ class FormStoreTest(unittest.TestCase):
         self.formNodes = self.client.test.formNodes
         self.storeFactory = StoreFactory(dbConn, '/TalenticaWorkspace/TLabs/graphite-python/RNA/src/store/users')
         self.publicFormStore = self.storeFactory.publicFormStore
-
+        self.publicClassStore= self.storeFactory.publicClassStore
         self.userStore = UserStore(dbConn)
         self.user1 = self.userStore.createUserNode("prasu05", "p$5%t")
         self.user2 = self.userStore.createUserNode("prasu06", "^%sf$")
@@ -48,8 +48,15 @@ class FormStoreTest(unittest.TestCase):
         self.assertEqual(None, self.publicFormStore.getFormNode(formNode[ID_KEY]))
         self.assertNotEqual(None, self.userFormStore.getPrivateFormNode(formNode[ID_KEY]))
 
+    def testAddField(self):
+        formNode = self.publicFormStore.createFormNode("https://pypi.python.org/pypi/YURL/0.12")
+        classNode = self.publicClassStore.createClassNode("testClass")
+        self.assertEqual(self.publicFormStore.addField(formNode, "to", classNode), True)
+        self.assertEqual(self.publicFormStore.addField(formNode, "from", classNode), True)
+        print self.publicFormStore.getFormNode(formNode[ID_KEY])
+
     def __clean__(self):
-        self.client.test.fromNodes.remove()
+        self.client.test.formNodes.remove()
         
 if __name__ == "__main__":
     unittest.main()

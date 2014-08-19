@@ -31,6 +31,10 @@ VERB_NAME_KEY = 'verbName'
 
 UPDATED_EXISTING_KEY = 'updatedExisting'
 USER_SECRET_KEY = 'secret'
+FORM_FIELD_QUERY_CLASS = 'queryClass'
+FORM_FIELD_CARDINALITY = 'cardinality'
+FORM_PUBLIC_FIELD = 'publicFields'
+
 #Store Types
 CLASS_STORE_TYPE = 'ClassStore'
 PROP_STORE_TYPE = 'PropertyStore'

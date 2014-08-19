@@ -67,9 +67,12 @@ class StoreFactory(object):
 
         self.publicClassStore.__setattr__(PUBLIC_PROP_STORE, self.publicPropertyStore)
         self.publicObjectStore.__setattr__(PUBLIC_PROP_STORE, self.publicPropertyStore)
+
         self.publicPropertyStore.__setattr__(PUBLIC_CLASS_STORE, self.publicClassStore)
         self.publicVerbStore.__setattr__(PUBLIC_CLASS_STORE, self.publicClassStore)
         self.publicObjectStore.__setattr__(PUBLIC_CLASS_STORE, self.publicClassStore)
+        self.publicFormStore.__setattr__(PUBLIC_CLASS_STORE, self.publicClassStore)
+
         self.publicVerbStore.__setattr__(PUBLIC_FORM_STORE, self.publicFormStore)
 
         self.privateStoreSourcePath = sourcePath
