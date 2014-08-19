@@ -7,13 +7,13 @@ import unittest
 from src.store.classStore import ClassStore
 from src.store.dbConnection import DBConnection
 from src.store.propertyStore import PropertyStore
-from src.store.objectStore import ObjectNodeStore
 from src.store.nameStore import NameStore
+from src.store.objectStore import ObjectStore
 
 class Test(unittest.TestCase):
 
     def testClassStore(self):
-        dbConn = DBConnection(None)
+        dbConn = DBConnection('test')
         cs = ClassStore(dbConn)
         user = cs.createClassNode('user')
         print user
@@ -35,7 +35,7 @@ class Test(unittest.TestCase):
 
         ns = NameStore(dbConn)
         pune = ns.createNameNode('pune')
-        os = ObjectNodeStore(dbConn)
+        os = ObjectStore(dbConn)
         sushant = os.createObjectNode('sushant', user)
         pune = os.createObjectNode('pune', place)
         print "create:%s, get:%s" % (sushant, os.getObjectNode('sushant'))

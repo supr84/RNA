@@ -7,7 +7,7 @@ from pymongo.mongo_client import MongoClient
 from src.store.StoreFactory import StoreFactory
 from src.store.dbConnection import DBConnection
 import unittest
-from src.store.constants import ID_KEY, NAME_NODE_ID_KEY
+from src.store.constants import ID_KEY
 from src.store.userStore import UserStore
 
 class FormStoreTest(unittest.TestCase):
@@ -46,7 +46,7 @@ class FormStoreTest(unittest.TestCase):
     def testCreatePrivateFormNode(self):
         formNode = self.userFormStore.createPrivateFormNode("https://pypi.python.org/pypi/YURsL/0.123")
         self.assertEqual(None, self.publicFormStore.getFormNode(formNode[ID_KEY]))
-        self.assertNotEqual(None, self.userFormStore.getPrivateFormNode(formNode[NAME_NODE_ID_KEY], formNode[ID_KEY]))
+        self.assertNotEqual(None, self.userFormStore.getPrivateFormNode(formNode[ID_KEY]))
 
     def __clean__(self):
         self.client.test.fromNodes.remove()

@@ -47,7 +47,7 @@ class CLassStoreTest(unittest.TestCase):
     def testCreatePublicAndGetPrivateNode(self):
         publicClass = self.publicClassStore.createClassNode("publicClass")
         userClassStore = self.storeFactory.getPrivateClassStore(self.user1)
-        publicClassviaPrivateStore = userClassStore.getPrivateClassNode(publicClass[NAME_NODE_ID_KEY], publicClass[ID_KEY])
+        publicClassviaPrivateStore = userClassStore.getPrivateClassNode(publicClass[ID_KEY])
         self.assertEqual(publicClass, publicClassviaPrivateStore)
 
     def testCreatePrivateAndGetPublicNode(self):
@@ -59,7 +59,7 @@ class CLassStoreTest(unittest.TestCase):
     def testCreatePrivateAndGetPrivateNode(self):
         userClassStore = self.storeFactory.getPrivateClassStore(self.user1)
         privateClass = userClassStore.createPrivateClassNode('privateClass')
-        privateClzViaPrivateStore = userClassStore.getPrivateClassNode(privateClass[NAME_NODE_ID_KEY], privateClass[ID_KEY])
+        privateClzViaPrivateStore = userClassStore.getPrivateClassNode(privateClass[ID_KEY])
         self.assertEqual(privateClass, privateClzViaPrivateStore)
 
     def testSharePublicClassNode(self):
@@ -71,9 +71,9 @@ class CLassStoreTest(unittest.TestCase):
         user1ClassStore = self.storeFactory.getPrivateClassStore(self.user1)
         user2ClassStore = self.storeFactory.getPrivateClassStore(self.user2)
         privateClass = user1ClassStore.createPrivateClassNode('privateClass')
-        self.assertEqual(user2ClassStore.getPrivateClassNode(privateClass[NAME_NODE_ID_KEY], privateClass[ID_KEY]), None)
+        self.assertEqual(user2ClassStore.getPrivateClassNode(privateClass[ID_KEY]), None)
         self.assertEqual(user1ClassStore.sharePrivateClassNode(privateClass, self.user2), True)
-        self.assertNotEqual(user2ClassStore.getPrivateClassNode(privateClass[NAME_NODE_ID_KEY], privateClass[ID_KEY]), None)
+        self.assertNotEqual(user2ClassStore.getPrivateClassNode(privateClass[ID_KEY]), None)
 
     def testSharePrivateClassNodeByOwnerWithProperties(self):
         user1ClassStore = self.storeFactory.getPrivateClassStore(self.user1)
@@ -82,9 +82,9 @@ class CLassStoreTest(unittest.TestCase):
         privateDomain = user1ClassStore.createPrivateClassNode('privateDomainClass')
         privateRange = user1ClassStore.createPrivateClassNode('privateRangeClass')
         user1PropStore.createPrivatePropertyNode('privateProp3', privateDomain, privateRange)
-        self.assertEqual(user2ClassStore.getPrivateClassNode(privateDomain[NAME_NODE_ID_KEY], privateDomain[ID_KEY]), None)
+        self.assertEqual(user2ClassStore.getPrivateClassNode(privateDomain[ID_KEY]), None)
         self.assertEqual(user1ClassStore.sharePrivateClassNode(privateDomain, self.user2), True)
-        self.assertNotEqual(user2ClassStore.getPrivateClassNode(privateDomain[NAME_NODE_ID_KEY], privateDomain[ID_KEY]), None)
+        self.assertNotEqual(user2ClassStore.getPrivateClassNode(privateDomain[ID_KEY]), None)
 
     def testSharePrivateClassNodeByNonOwner(self):
         user1ClassStore = self.storeFactory.getPrivateClassStore(self.user1)
@@ -100,10 +100,10 @@ class CLassStoreTest(unittest.TestCase):
         institution = user1ClassStore.createPrivateClassNode('institution')
 
         location = user1PropStore.createPrivatePropertyNode('location', user, place)
-        beforeAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        beforeAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(beforeAdding.has_key('p$5%tdomain'), False)
         self.assertEqual(user1ClassStore.addPrivateDomain(institution, location),True)
-        afterAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        afterAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(afterAdding.has_key('p$5%tdomain'), True)
 
     def testAdd_PrivateDomain_PublicClass(self):
@@ -114,10 +114,10 @@ class CLassStoreTest(unittest.TestCase):
         institution = self.publicClassStore.createClassNode('institution')
 
         location = user1PropStore.createPrivatePropertyNode('location', user, place)
-        beforeAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        beforeAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(beforeAdding.has_key('p$5%tdomain'), False)
         self.assertEqual(user1ClassStore.addPrivateDomain(institution, location),True)
-        afterAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        afterAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(afterAdding.has_key('p$5%tdomain'), True)
 
     def testAdd_PublicDomain_PrivateClass(self):
@@ -127,10 +127,10 @@ class CLassStoreTest(unittest.TestCase):
         institution = user1ClassStore.createPrivateClassNode('institution')
         
         location = self.publicPropStore.createPropertyNode('location', user, place)
-        beforeAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        beforeAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(beforeAdding.has_key('p$5%tdomain'), False)
         self.assertEqual(user1ClassStore.addPrivateDomain(institution, location),True)
-        afterAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        afterAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(afterAdding.has_key('p$5%tdomain'), True)
 
     def testAdd_PublicDomain_PublicClass(self):
@@ -140,10 +140,10 @@ class CLassStoreTest(unittest.TestCase):
         institution = self.publicClassStore.createClassNode('institution')
         
         location = self.publicPropStore.createPropertyNode('location', user, place)
-        beforeAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        beforeAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(beforeAdding.has_key('p$5%tdomain'), False)
         self.assertEqual(user1ClassStore.addPrivateDomain(institution, location),True)
-        afterAdding = user1ClassStore.getPrivateClassNode(institution[NAME_NODE_ID_KEY], institution[ID_KEY])
+        afterAdding = user1ClassStore.getPrivateClassNode(institution[ID_KEY])
         self.assertEqual(afterAdding.has_key('p$5%tdomain'), True)
 
     def testAddValLink(self):

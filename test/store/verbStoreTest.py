@@ -66,19 +66,19 @@ class VerbStoreTest(unittest.TestCase):
 
     def testCreatePrivateVerbNode(self):
         privateVerb = self.userVerbStore.createPrivateVerbNode("email")
-        self.assertNotEqual(self.userVerbStore.getPrivateVerbNode(privateVerb[NAME_NODE_ID_KEY], privateVerb[ID_KEY]), None)
+        self.assertNotEqual(self.userVerbStore.getPrivateVerbNode(privateVerb[ID_KEY]), None)
 
     def testAddPrivateDomain(self):
         privateVerb = self.userVerbStore.createPrivateVerbNode("email")
         classNode = self.publicClassStore.createClassNode("Article")
         self.assertEqual(self.userVerbStore.addPrivateDomain(privateVerb, classNode), True)
-        self.assertNotEqual(self.userVerbStore.getPrivateVerbNode(privateVerb[NAME_NODE_ID_KEY], privateVerb[ID_KEY]), None)
+        self.assertNotEqual(self.userVerbStore.getPrivateVerbNode(privateVerb[ID_KEY]), None)
 
     def testAddPrivateForm(self):
         privateVerb = self.userVerbStore.createPrivateVerbNode("email")
         formNode = self.publicFormStore.createFormNode("https://pypi.python.org/pypi/YURL/0.12")
         self.assertEqual(self.userVerbStore.addPrivateForm(privateVerb, formNode), True)
-        self.assertNotEqual(self.userVerbStore.getPrivateVerbNode(privateVerb[NAME_NODE_ID_KEY], privateVerb[ID_KEY]), None)
+        self.assertNotEqual(self.userVerbStore.getPrivateVerbNode(privateVerb[ID_KEY]), None)
     
     def testSharePrivateVerbNode(self):
         privateVerb = self.userVerbStore.createPrivateVerbNode("email")
@@ -88,7 +88,7 @@ class VerbStoreTest(unittest.TestCase):
         self.assertEqual(self.userVerbStore.addPrivateForm(privateVerb, formNode), True)
         self.assertEqual(self.userVerbStore.sharePrivateVerbNode(privateVerb, self.user2), True)
         user2VerbStore = self.storeFactory.getPrivateVerbStore(self.user2)
-        print user2VerbStore.getPrivateVerbNode(privateVerb[NAME_NODE_ID_KEY], privateVerb[ID_KEY])
+        print user2VerbStore.getPrivateVerbNode(privateVerb[ID_KEY])
 
     def __clean__(self):
         self.client.test.formNodes.remove()

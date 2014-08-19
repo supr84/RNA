@@ -53,15 +53,18 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__FormStore(object):
                                    nameKey="%s%s" % (self.USER_SECRET, FORM_NAME_KEY))
         return formNode
 
-    def getPrivateFormNode(self, formNameNodeId, formNodeId):
-        if None == formNameNodeId:
+    def getPrivateFormNode(self, formNodeId):
+        permissibleObject = {NAME_NODE_ID_KEY:1}
+        fn = self.formNodes.find_one({ID_KEY: formNodeId}, permissibleObject)
+        if None == fn:
             return None
-        query = {ID_KEY:formNameNodeId, self.userFormNameLink : { '$exists': True }}
+        query = {ID_KEY:fn[NAME_NODE_ID_KEY], self.userFormNameLink : fn[ID_KEY]}
         nameNode = self.nameNodes.find_one(query, {self.userFormNameLink:1})
         if None != nameNode:
-            return self.formNodes.find_one({ID_KEY:formNodeId})
+            return fn
         else:
-            return self.formNodes.find_one({ID_KEY:formNodeId, OWNER_KEY: {'$exists':False}})
+            return self.formNodes.find_one({ID_KEY:formNodeId, OWNER_KEY: {'$exists':False}},
+                                            permissibleObject)
 
     def sharePrivateFormNode(self, formNode, userNode):
         isShared = False

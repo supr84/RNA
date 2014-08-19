@@ -61,24 +61,22 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__ClassStore(object):
         return classNode
 
 
-    def getPrivateClassNode(self, classNameNodeId, classNodeId):
-        if None == classNameNodeId:
+    def getPrivateClassNode(self, classNodeId):
+        permissibleObject = {NAME_NODE_ID_KEY:1,
+                             DOMAIN_KEY:1,
+                             RANGE_KEY:1,
+                             self.userRangeLink:1,
+                             self.userDomainLink:1}
+        cn = self.classNodes.find_one({ID_KEY: classNodeId}, permissibleObject)
+        if None == cn:
             return None
-        query = {ID_KEY:classNameNodeId, self.userClassNameLink : { '$exists': True }}
+        query = {ID_KEY:cn[NAME_NODE_ID_KEY], self.userClassNameLink : cn[ID_KEY]}
         nameNode = self.nameNodes.find_one(query, {self.userClassNameLink:1})
         if None != nameNode:
-            return self.classNodes.find_one({ID_KEY:classNodeId},
-                                                        {NAME_NODE_ID_KEY:1,
-                                                         DOMAIN_KEY:1,
-                                                         RANGE_KEY:1,
-                                                         self.userRangeLink:1,
-                                                         self.userDomainLink:1})
+            return cn
         else:
             return self.classNodes.find_one({ID_KEY:classNodeId, OWNER_KEY: {'$exists':False}},
-                                                        {NAME_NODE_ID_KEY:1,
-                                                         self.userRangeLink:1,
-                                                         self.userDomainLink:1
-                                                         })
+                                            permissibleObject)
 
     def sharePrivateClassNode(self, classNode, userNode):
         isShared = False
@@ -116,11 +114,9 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__ClassStore(object):
         return self.__addLink__(classNode, propNode, self.userRangeLink)
 
     def __addLink__(self, classNode, propNode, key):
-        privateClassNode = self.getPrivateClassNode(classNameNodeId=classNode[NAME_NODE_ID_KEY],
-                                                    classNodeId=classNode[ID_KEY])
+        privateClassNode = self.getPrivateClassNode(classNodeId=classNode[ID_KEY])
         if None != privateClassNode:
-            propNode = self.privatePropStore.getPrivatePropertyNode(propNameNodeId=propNode.get(NAME_NODE_ID_KEY),
-                                                                propNodeId=propNode[ID_KEY])
+            propNode = self.privatePropStore.getPrivatePropertyNode(propNodeId=propNode[ID_KEY])
             if None == propNode:
                 return False
             updated = self.classNodes.update({ID_KEY:classNode[ID_KEY]},

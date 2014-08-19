@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 from src.store.Exception.storeError import ClassNodeError
 from src.store.constants import DOMAIN_KEY, RANGE_KEY, NAME_NODE_ID_KEY, \
     OWNER_KEY, UPDATED_EXISTING_KEY, PROPERTY_NODE_COLLECTION, PROP_NAME_KEY, ID_KEY, \
-    USER_SECRET_KEY, NAME_NODE_COLLECTION
+    USER_SECRET_KEY, NAME_NODE_COLLECTION, PROP_VALUE_KEY
 from src.store.nameStore import NameStore
 from src.store.users.securityError import SecurityBreachError
 
@@ -53,11 +53,9 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__PropertyStore(object):
 
     def createPrivatePropertyNode(self, propName, domainClassNode, rangeClassNode):
         privateRangeClass = None
-        privateDomainClass = self.privateClassStore.getPrivateClassNode(classNameNodeId=domainClassNode.get(NAME_NODE_ID_KEY),
-                                                                        classNodeId=domainClassNode.get(ID_KEY))
+        privateDomainClass = self.privateClassStore.getPrivateClassNode(classNodeId=domainClassNode.get(ID_KEY))
         if None != privateDomainClass:
-            privateRangeClass = self.privateClassStore.getPrivateClassNode(classNameNodeId=rangeClassNode.get(NAME_NODE_ID_KEY),
-                                                                           classNodeId=rangeClassNode.get(ID_KEY))
+            privateRangeClass = self.privateClassStore.getPrivateClassNode(classNodeId=rangeClassNode.get(ID_KEY))
             if None == privateRangeClass:
                 return None
 
@@ -79,26 +77,22 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__PropertyStore(object):
         propertyNode.pop(OWNER_KEY)
         return propertyNode
 
-    def getPrivatePropertyNode(self, propNameNodeId, propNodeId):
-        if None == propNameNodeId:
+    def getPrivatePropertyNode(self, propNodeId):
+        permissibleObject = {NAME_NODE_ID_KEY:1,
+                             DOMAIN_KEY:1,
+                             RANGE_KEY:1,
+                             self.userRangeLink:1,
+                             self.userDomainLink:1}
+        pn = self.propNodes.find_one({ID_KEY: propNodeId}, permissibleObject)
+        if None == pn:
             return None
-        query = {ID_KEY:propNameNodeId, self.userPropNameLink : { '$exists': True }}
+        query = {ID_KEY:pn[NAME_NODE_ID_KEY], self.userPropNameLink : pn[ID_KEY]}
         nameNode = self.nameNodes.find_one(query, {self.userPropNameLink:1})
         if None != nameNode:
-            return self.propNodes.find_one({ID_KEY:propNodeId},
-                                            {NAME_NODE_ID_KEY:1,
-                                             DOMAIN_KEY:1,
-                                             RANGE_KEY:1,
-                                             self.userRangeLink:1,
-                                             self.userDomainLink:1})
+            return pn
         else:
             return self.propNodes.find_one({ID_KEY:propNodeId, OWNER_KEY: {'$exists':False}},
-                                            {NAME_NODE_ID_KEY:1,
-                                             DOMAIN_KEY:1,
-                                             RANGE_KEY:1,
-                                             self.userRangeLink:1,
-                                             self.userDomainLink:1
-                                             })
+                                            permissibleObject)
 
     def sharePrivatePropertyNode(self, propNode, userNode):
         isShared = False
@@ -131,14 +125,22 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__PropertyStore(object):
 
     def addPrivateDomain(self, propNode, domainClassNode):
         privateDomainClass = self.privateClassStore.\
-            getPrivateClassNode(classNameNodeId=domainClassNode.get(NAME_NODE_ID_KEY),
-                                classNodeId=domainClassNode.get(ID_KEY))
+            getPrivateClassNode(classNodeId=domainClassNode.get(ID_KEY))
         if None != privateDomainClass:
-            privatePropNode = self.getPrivatePropertyNode(propNameNodeId=propNode[NAME_NODE_ID_KEY],
-                                                          propNodeId=propNode[ID_KEY])
+            privatePropNode = self.getPrivatePropertyNode(propNodeId=propNode[ID_KEY])
             if None == privatePropNode:
                 return False
             updated = self.propNodes.update({ID_KEY:propNode.get(ID_KEY)},
                                             { '$addToSet': {  self.userDomainLink: privateDomainClass.get(ID_KEY) } })
             return updated[UPDATED_EXISTING_KEY]
         return False
+
+    def addPrivateValLink(self, propNode, valNode):
+        if None == propNode or None == valNode:
+            return False
+        pn = self.getPrivatePropertyNode(propNode[ID_KEY])
+        if None == pn:
+            return False
+        privateValKey = "%s%s" % (self.USER_SECRET, PROP_VALUE_KEY)
+        updated = self.propNodes.update({ID_KEY:pn[ID_KEY]}, { '$addToSet': { privateValKey: valNode[ID_KEY] } })
+        return updated[UPDATED_EXISTING_KEY]

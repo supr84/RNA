@@ -53,19 +53,15 @@ class ObjectStoreTest(unittest.TestCase):
     def testCreatePrivateObjectNode(self):
         objNode = self.user1ObjStore.createPrivateObjectNode("sushant pradhan", self.classNode)
         self.assertEqual(self.publicObjectStore.getObjectNode(objNode[ID_KEY]), None)
-        self.assertNotEqual(self.user1ObjStore.getPrivateObjectNode(objNode[NAME_NODE_ID_KEY],
-                                                                   objNode[ID_KEY]), None)
+        self.assertNotEqual(self.user1ObjStore.getPrivateObjectNode(objNode[ID_KEY]), None)
 
     def testSharePrivateObjectNode(self):
         objNode = self.user1ObjStore.createPrivateObjectNode("sushant pradhan", self.classNode)
-        self.assertEqual(self.user2ObjStore.getPrivateObjectNode(objNode[NAME_NODE_ID_KEY],
-                                                                   objNode[ID_KEY]), None)
+        self.assertEqual(self.user2ObjStore.getPrivateObjectNode(objNode[ID_KEY]), None)
         self.assertEqual(self.user1ObjStore.sharePrivateObjectNode(objNode, self.user2), True)
-        self.assertNotEqual(self.user2ObjStore.getPrivateObjectNode(objNode[NAME_NODE_ID_KEY],
-                                                                   objNode[ID_KEY]), None)
+        self.assertNotEqual(self.user2ObjStore.getPrivateObjectNode(objNode[ID_KEY]), None)
         self.assertEqual(self.publicObjectStore.getObjectNode(objNode[ID_KEY]), None)
-        self.assertNotEqual(self.user1ObjStore.getPrivateObjectNode(objNode[NAME_NODE_ID_KEY],
-                                                                   objNode[ID_KEY]), None)
+        self.assertNotEqual(self.user1ObjStore.getPrivateObjectNode(objNode[ID_KEY]), None)
 
     def testAddPublicProperty(self):
         class1 = self.publicClassStore.createClassNode("testClass1")
@@ -78,6 +74,18 @@ class ObjectStoreTest(unittest.TestCase):
         valNode2 = self.publicObjectStore.createObjectNode("testObject", class2)
         self.assertEqual(self.publicObjectStore.addPublicProperty(testObjNode, prop1, valNode2), True)
         print valNode
+# 
+#     def testAddPrivateProperty(self):
+#         class1 = self.publicClassStore.createClassNode("testClass1")
+#         class2 = self.publicClassStore.createClassNode("testClass2")
+#         prop1 = self.publicPropertyStore.createPropertyNode("testProp", class1, class2)
+#         prop2 = self.publicPropertyStore.createPropertyNode("testProp1", class1)
+#         testObjNode = self.user1ObjStore.createPrivateObjectNode("testPrivateObject", class1)
+#         valNode = self.nameNodes.find_one()
+#         self.assertEqual(self.user1ObjStore.addPrivateProperty(testObjNode, prop2, valNode), True)
+#         valNode2 = self.publicObjectStore.createObjectNode("testObject", class2)
+#         self.assertEqual(self.publicObjectStore.addPublicProperty(testObjNode, prop1, valNode2), True)
+#         print valNode
 
     def __clean__(self):
         self.client.test.objNodes.remove()

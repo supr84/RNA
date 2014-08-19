@@ -89,7 +89,7 @@ class PropStoreTest(unittest.TestCase):
             userPropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
             (publicDomain, publicRange) = self.__classFactory__(False, False)
             publicProp = self.publicPropStore.createPropertyNode('publilcProp', publicDomain, publicRange)
-            self.assertEqual(publicProp, userPropStore.getPrivatePropertyNode(publicProp[NAME_NODE_ID_KEY], publicProp[ID_KEY]))
+            self.assertEqual(publicProp, userPropStore.getPrivatePropertyNode(publicProp[ID_KEY]))
 
         testCreate_PublicDomain_PublicProperty_PublicRange()
 
@@ -100,7 +100,7 @@ class PropStoreTest(unittest.TestCase):
             (publicDomain, publicRange) = self.__classFactory__(False, False)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp', publicDomain, publicRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
-            pcn = userClassStore.getPrivateClassNode(publicDomain[NAME_NODE_ID_KEY], publicDomain[ID_KEY])
+            pcn = userClassStore.getPrivateClassNode(publicDomain[ID_KEY])
             self.assertEqual(pcn.has_key('p$5%tdomain'), True)
             pub = self.publicClassStore.getClassNode(publicDomain[ID_KEY])
             self.assertEqual(pub.has_key('p$5%tdomain'), False)
@@ -111,12 +111,12 @@ class PropStoreTest(unittest.TestCase):
             privateProp = userPropStore.createPrivatePropertyNode('privateProp2', publicDomain, privateRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
 
-            pr = userClassStore.getPrivateClassNode(privateRange[NAME_NODE_ID_KEY], privateRange[ID_KEY])
+            pr = userClassStore.getPrivateClassNode(privateRange[ID_KEY])
             self.assertEqual(pr.has_key('p$5%trange'), True)
             self.assertEqual(privateProp[ID_KEY] in pr.get('p$5%trange'), True)
             self.assertEqual(pr.has_key('range'), False)
 
-            pd = userClassStore.getPrivateClassNode(publicDomain[NAME_NODE_ID_KEY], publicDomain[ID_KEY])
+            pd = userClassStore.getPrivateClassNode(publicDomain[ID_KEY])
             self.assertEqual(pd.has_key('p$5%tdomain'), True)
             self.assertEqual(privateProp[ID_KEY] in pd.get('p$5%tdomain'), True)
             self.assertEqual(pd.has_key('domain'), False)
@@ -126,12 +126,12 @@ class PropStoreTest(unittest.TestCase):
             privateProp = userPropStore.createPrivatePropertyNode('privateProp3', privateDomain, publicRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
 
-            pr = userClassStore.getPrivateClassNode(publicRange[NAME_NODE_ID_KEY], publicRange[ID_KEY])
+            pr = userClassStore.getPrivateClassNode(publicRange[ID_KEY])
             self.assertEqual(pr.has_key('p$5%trange'), True)
             self.assertEqual(privateProp[ID_KEY] in pr.get('p$5%trange'), True)
             self.assertEqual(pr.has_key('range'), False)
 
-            pd = userClassStore.getPrivateClassNode(privateDomain[NAME_NODE_ID_KEY], privateDomain[ID_KEY])
+            pd = userClassStore.getPrivateClassNode(privateDomain[ID_KEY])
             self.assertEqual(pd.has_key('p$5%tdomain'), True)
             self.assertEqual(privateProp[ID_KEY] in pd.get('p$5%tdomain'), True)
             self.assertEqual(pd.has_key('domain'), False)
@@ -141,12 +141,12 @@ class PropStoreTest(unittest.TestCase):
             privateProp = userPropStore.createPrivatePropertyNode('privateProp4', privateDomain, privateRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
 
-            pr = userClassStore.getPrivateClassNode(privateRange[NAME_NODE_ID_KEY], privateRange[ID_KEY])
+            pr = userClassStore.getPrivateClassNode(privateRange[ID_KEY])
             self.assertEqual(pr.has_key('p$5%trange'), True)
             self.assertEqual(privateProp[ID_KEY] in pr.get('p$5%trange'), True)
             self.assertEqual(pr.has_key('range'), False)
 
-            pd = userClassStore.getPrivateClassNode(privateDomain[NAME_NODE_ID_KEY], privateDomain[ID_KEY])
+            pd = userClassStore.getPrivateClassNode(privateDomain[ID_KEY])
             self.assertEqual(pd.has_key('p$5%tdomain'), True)
             self.assertEqual(privateProp[ID_KEY] in pd.get('p$5%tdomain'), True)
             self.assertEqual(pd.has_key('domain'), False)
@@ -161,25 +161,25 @@ class PropStoreTest(unittest.TestCase):
         def testCreate_PublicDomain_PrivateProperty_PublicRange():
             (publicDomain, publicRange) = self.__classFactory__(False, False)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp', publicDomain, publicRange)
-            get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
+            get =  userPropStore.getPrivatePropertyNode(privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
 
         def testCreate_PublicDomain_PrivateProperty_PrivateRange():
             (publicDomain, privateRange) = self.__classFactory__(False, True)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp2', publicDomain, privateRange)
-            get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
+            get =  userPropStore.getPrivatePropertyNode(privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
 
         def testCreate_PrivateDomain_PrivateProperty_PublicRange():
             (privateDomain, publicRange) = self.__classFactory__(True, False)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp3', privateDomain, publicRange)
-            get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
+            get =  userPropStore.getPrivatePropertyNode(privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
 
         def testCreate_PrivateDomain_PrivateProperty_PrivateRange():
             (privateDomain, privateRange) = self.__classFactory__(True, True)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp4', privateDomain, privateRange)
-            get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
+            get =  userPropStore.getPrivatePropertyNode(privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
 
         testCreate_PublicDomain_PrivateProperty_PublicRange()
@@ -192,9 +192,9 @@ class PropStoreTest(unittest.TestCase):
         user2PropStore = self.storeFactory.getPrivatePropertyStore(self.user2)
         (publicDomain, privateRange) = self.__classFactory__(False, True)
         privateProp = user1PropStore.createPrivatePropertyNode('privateProp2', publicDomain, privateRange)
-        self.assertEqual(user2PropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY]), None)
+        self.assertEqual(user2PropStore.getPrivatePropertyNode(privateProp[ID_KEY]), None)
         self.assertEqual(user1PropStore.sharePrivatePropertyNode(privateProp, self.user2), True)
-        self.assertNotEqual(user2PropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY]), None)
+        self.assertNotEqual(user2PropStore.getPrivatePropertyNode(privateProp[ID_KEY]), None)
 
     def testSharePrivatePropertyNodeByNonOwner(self):
         user1PropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
@@ -216,10 +216,10 @@ class PropStoreTest(unittest.TestCase):
         institution = self.publicClassStore.createClassNode('institution')
 
         location = self.publicPropStore.createPropertyNode('location', user, place)
-        beforeAdding = userPropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        beforeAdding = userPropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(beforeAdding.has_key('p$5%tdomain'), False)
         self.assertEqual(userPropStore.addPrivateDomain(location, institution), True)
-        afterAdding = userPropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        afterAdding = userPropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(afterAdding.has_key('p$5%tdomain'), True)
 
     def testAdd_PublicDomain_PrivateProperty(self):
@@ -231,10 +231,10 @@ class PropStoreTest(unittest.TestCase):
 
         location = user1PropStore.createPrivatePropertyNode('location', user, place)
 
-        beforeAdding = user1PropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        beforeAdding = user1PropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(institution[ID_KEY] in beforeAdding.get('p$5%tdomain'), False)
         self.assertEqual(user1PropStore.addPrivateDomain(location, institution), True)
-        afterAdding = user1PropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        afterAdding = user1PropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(institution[ID_KEY] in afterAdding.get('p$5%tdomain'), True)
 
     def testAdd_PrivateDomain_PublicProperty(self):
@@ -245,10 +245,10 @@ class PropStoreTest(unittest.TestCase):
         institution = user1ClassStore.createPrivateClassNode('institution')
 
         location = self.publicPropStore.createPropertyNode('location', user, place)
-        beforeAdding = user1PropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        beforeAdding = user1PropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(beforeAdding.has_key('p$5%tdomain'), False)
         self.assertEqual(user1PropStore.addPrivateDomain(location, institution), True)
-        afterAdding = user1PropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        afterAdding = user1PropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(afterAdding.has_key('p$5%tdomain'), True)
 
     def testAdd_PrivateDomain_PrivateProperty(self):
@@ -259,10 +259,10 @@ class PropStoreTest(unittest.TestCase):
         institution = user1ClassStore.createPrivateClassNode('institution')
 
         location = user1PropStore.createPrivatePropertyNode('location', user, place)
-        beforeAdding = user1PropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        beforeAdding = user1PropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(institution[ID_KEY] in beforeAdding.get('p$5%tdomain'), False)
         self.assertEqual(user1PropStore.addPrivateDomain(location, institution), True)
-        afterAdding = user1PropStore.getPrivatePropertyNode(location[NAME_NODE_ID_KEY], location[ID_KEY])
+        afterAdding = user1PropStore.getPrivatePropertyNode(location[ID_KEY])
         self.assertEqual(institution[ID_KEY] in afterAdding.get('p$5%tdomain'), True)
 
 if __name__ == "__main__":

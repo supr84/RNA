@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 from src.store.constants import DOMAIN_KEY, RANGE_KEY, NAME_NODE_ID_KEY, \
     OWNER_KEY, UPDATED_EXISTING_KEY, \
     USER_SECRET_KEY, NAME_NODE_COLLECTION, ID_KEY, FORM_KEY, \
-    VERB_NODE_COLLECTION, VERB_NAME_KEY, VERB_KEY
+    VERB_NODE_COLLECTION, VERB_NAME_KEY
 from src.store.nameStore import NameStore
 from src.store.users.securityError import SecurityBreachError
 from src.store.Exception.storeError import VerbNodeError
@@ -65,22 +65,22 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__VerbStore(object):
         return verbNode
 
 
-    def getPrivateVerbNode(self, verbNameNodeId, verbNodeId):
-        if None == verbNameNodeId:
+    def getPrivateVerbNode(self, verbNodeId):
+        permissibleObject = {NAME_NODE_ID_KEY:1,
+                             DOMAIN_KEY:1,
+                             RANGE_KEY:1,
+                             self.userDomainLink:1,
+                             self.userFormLink:1}
+        vn = self.verbNodes.find_one({ID_KEY: verbNodeId}, permissibleObject)
+        if None == vn:
             return None
-        query = {ID_KEY:verbNameNodeId, self.userVerbNameLink : { '$exists': True }}
+        query = {ID_KEY:vn[NAME_NODE_ID_KEY], self.userVerbNameLink : vn[ID_KEY]}
         nameNode = self.nameNodes.find_one(query, {self.userVerbNameLink:1})
-        permisibleObject = {NAME_NODE_ID_KEY:1,
-                            DOMAIN_KEY:1,
-                            RANGE_KEY:1,
-                            self.userDomainLink:1,
-                            self.userFormLink:1}
         if None != nameNode:
-            return self.verbNodes.find_one({ID_KEY:verbNodeId},
-                                           permisibleObject)
+            return vn
         else:
             return self.verbNodes.find_one({ID_KEY:verbNodeId, OWNER_KEY: {'$exists':False}},
-                                           permisibleObject)
+                                            permissibleObject)
 
     def sharePrivateVerbNode(self, verbNode, userNode):
         isShared = False
@@ -113,11 +113,9 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__VerbStore(object):
 
     def addPrivateDomain(self, verbNode, classNode):
         key = self.userDomainLink
-        privateVerbNode = self.getPrivateVerbNode(verbNameNodeId=verbNode[NAME_NODE_ID_KEY],
-                                                  verbNodeId=verbNode[ID_KEY])
+        privateVerbNode = self.getPrivateVerbNode(verbNodeId=verbNode[ID_KEY])
         if None != privateVerbNode:
-            classNode = self.privateClassStore.getPrivateClassNode(classNameNodeId=classNode.get(NAME_NODE_ID_KEY),
-                                                                classNodeId=classNode[ID_KEY])
+            classNode = self.privateClassStore.getPrivateClassNode(classNodeId=classNode[ID_KEY])
             if None == classNode:
                 return False
             updated = self.verbNodes.update({ID_KEY:verbNode[ID_KEY]},
@@ -127,11 +125,9 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__VerbStore(object):
 
     def addPrivateForm(self, verbNode, formNode):
         key = self.userFormLink
-        privateVerbNode = self.getPrivateVerbNode(verbNameNodeId=verbNode[NAME_NODE_ID_KEY],
-                                                    verbNodeId=verbNode[ID_KEY])
+        privateVerbNode = self.getPrivateVerbNode(verbNodeId=verbNode[ID_KEY])
         if None != privateVerbNode:
-            classNode = self.privateFormStore.getPrivateFormNode(formNameNodeId=formNode.get(NAME_NODE_ID_KEY),
-                                                                 formNodeId=formNode[ID_KEY])
+            classNode = self.privateFormStore.getPrivateFormNode(formNodeId=formNode[ID_KEY])
             if None == classNode:
                 return False
             updated = self.verbNodes.update({ID_KEY:verbNode[ID_KEY]},
