@@ -92,10 +92,10 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__ObjectStore(object):
         if None == prop:
             raise PropertyNodeError('property does not exist', propNode)
 
-        if objType[ID_KEY] not in prop[DOMAIN_KEY] or objType[ID_KEY] not in prop[self.userDomainLink]:
+        if objType[ID_KEY] not in prop[DOMAIN_KEY] and prop[self.userDomainLink] and objType[ID_KEY] not in prop[self.userDomainLink]:
             raise ClassNodeError("object's type does not have the mentioned property", objType)
         # check propRange
-        if not prop.has_key(RANGE_KEY) and prop.has_key(self.userRangeLink):
+        if not prop.has_key(RANGE_KEY) and not prop.has_key(self.userRangeLink):
             val = self.nameNodes.find_one({ID_KEY:valueNode[ID_KEY]})
             if None == val:
                 raise ValueNodeError(message='value does not exist', objNode=valueNode)
@@ -106,14 +106,14 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__ObjectStore(object):
             else:
                 return False
         else:
-            propRange = prop[RANGE_KEY]
-            if None == propRange:
-                propRange = prop[self.userRangeLink]
-            if propRange != val[OBJECT_TYPE_LINK]:
-                raise ValueNodeError(message="value is not compatible with property's range", objNode=propRange)
-            val = self.getObjectNode(valueNode[ID_KEY])
+            val = self.getPrivateObjectNode(valueNode[ID_KEY])
             if None == val:
                 raise ValueNodeError(message='value does not exist', objNode=valueNode)
+            propRange = prop.get(RANGE_KEY)
+            if None == propRange:
+                propRange = prop.get(self.userRangeLink)
+            if propRange != val[OBJECT_TYPE_LINK]:
+                raise ValueNodeError(message="value is not compatible with property's range", objNode=propRange)
             linkName = "%s%s" % (self.USER_SECRET, self.nameStore.getNameNodeById(prop[NAME_NODE_ID_KEY])[NAME_KEY])
             updated = self.objNodes.update({ID_KEY:objNode[ID_KEY]}, { '$addToSet': { linkName:val[ID_KEY] } })
             if updated[UPDATED_EXISTING_KEY]:
