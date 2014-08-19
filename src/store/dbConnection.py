@@ -23,6 +23,10 @@ class DBConnection(object):
     def __ensureIndex__(self, db):
         stringNodes = db.stringNodes
         stringNodes.create_index([(NAME_KEY, ASCENDING)], unique=True)
+        verbNodes = db.verbNodes
+        verbNodes.create_index([(NAME_NODE_ID_KEY, ASCENDING)], unique=True)
+        formNodes = db.formNodes
+        formNodes.create_index([(NAME_NODE_ID_KEY, ASCENDING)], unique=True)
         classNodes = db.classNodes
         classNodes.create_index([(NAME_NODE_ID_KEY, ASCENDING)], unique=True)
         propNodes = db.propNodes

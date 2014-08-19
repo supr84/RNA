@@ -40,13 +40,13 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__ClassStore(object):
         else:
             return []
 
-    def __getNameNode__(self, className):
+    def __getNameNode__(self, formURI):
         #first letter of class should be capital letters
-        name = className.title()
+        name = formURI.title()
         tokens = name.split()
         if len(tokens) != 1:
             raise ClassNodeError('class node name should not contain white spaces', name)
-        nameNode = self.nameStore.getNameNode(name)
+        nameNode = self.nameStore.getNameNodeByName(name)
         if None == nameNode:
             nameNode = self.nameStore.createNameNode(name)
         return nameNode
@@ -89,7 +89,7 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__ClassStore(object):
         classNode = self.classNodes.find_one(findQuery)
         if None != classNode:
             isShared = self.nameStore.addNameLink(nameNodeId=classNode[NAME_NODE_ID_KEY],
-                                                  nodeId=classNode,
+                                                  nodeId=classNode[ID_KEY],
                                                   nameKey=sharedClassNameKey)
             if isShared:
                 sharedDomainNameKey = "%s%s" % (userNode[USER_SECRET_KEY], DOMAIN_KEY)

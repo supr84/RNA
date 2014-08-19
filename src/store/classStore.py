@@ -21,13 +21,13 @@ class ClassStore(object):
         self.collection = dbConn.getDatabase().classNodes
         self.nameStore = NameStore(dbConn)
 
-    def __getNameNode__(self, className):
+    def __getNameNode__(self, verbName):
         #first letter of class should be capital letters
-        name = className.title()
+        name = verbName.title()
         tokens = name.split()
         if len(tokens) != 1:
             raise ClassNodeError('class node name should not contain white spaces', name)
-        nameNode = self.nameStore.getNameNode(name)
+        nameNode = self.nameStore.getNameNodeByName(name)
         if None == nameNode:
             nameNode = self.nameStore.createNameNode(name)
         return nameNode
@@ -60,6 +60,8 @@ class ClassStore(object):
         return updated[UPDATED_EXISTING_KEY]
 
     def addRange(self, classNode, propNode):
+        if None == classNode or None == propNode:
+            return False
         propNode = self.publicPropStore.getPropertyNode(propNode[ID_KEY])
         if None == propNode:
             return False

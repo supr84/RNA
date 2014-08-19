@@ -40,13 +40,13 @@ class __FACTORY__USER__NAME__PLACE__HOLDER__PropertyStore(object):
         else:
             return []
 
-    def __getNameNode__(self, className):
+    def __getNameNode__(self, formURI):
         #first letter of class should be capital letters
-        name = className.title()
+        name = formURI.title()
         tokens = name.split()
         if len(tokens) != 1:
             raise ClassNodeError('class node name should not contain white spaces', name)
-        nameNode = self.nameStore.getNameNode(name)
+        nameNode = self.nameStore.getNameNodeByName(name)
         if None == nameNode:
             nameNode = self.nameStore.createNameNode(name)
         return nameNode

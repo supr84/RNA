@@ -82,3 +82,11 @@ class ValueNodeError(ObjectNodeError):
 class ClassNodeError(ObjectNodeError):
     def __init__(self, message, objNode):
         ObjectNodeError(message=message, objNode=objNode)
+
+class VerbNodeError(ObjectNodeError):
+    def __init__(self, message, objNode):
+        ObjectNodeError(message=message, objNode=objNode)
+
+class FormNodeError(ObjectNodeError):
+    def __init__(self, message, objNode):
+        ObjectNodeError(message=message, objNode=objNode)

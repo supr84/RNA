@@ -8,7 +8,7 @@ from pymongo.errors import DuplicateKeyError
 from src.store.Exception.storeError import UserNodeError
 from src.store.constants import USER_NAME_KEY, USER_SECRET_KEY
 
-class USerStore(object):
+class UserStore(object):
     '''
     classdocs
     '''

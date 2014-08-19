@@ -7,7 +7,7 @@ from pymongo.mongo_client import MongoClient
 from src.store.StoreFactory import StoreFactory
 from src.store.constants import ID_KEY, NAME_NODE_ID_KEY
 from src.store.dbConnection import DBConnection
-from src.store.userStore import USerStore
+from src.store.userStore import UserStore
 import unittest
 
 class PropStoreTest(unittest.TestCase):
@@ -22,7 +22,7 @@ class PropStoreTest(unittest.TestCase):
         self.storeFactory = StoreFactory(dbConn, '/TalenticaWorkspace/TLabs/graphite-python/RNA/src/store/users')
         self.publicClassStore = self.storeFactory.publicClassStore
         self.publicPropStore = self.storeFactory.publicPropertyStore
-        self.userStore = USerStore(dbConn)
+        self.userStore = UserStore(dbConn)
         self.user1 = self.userStore.createUserNode("prasu05", "p$5%t")
         self.user2 = self.userStore.createUserNode("prasu06", "^%sf$")
 
@@ -43,7 +43,7 @@ class PropStoreTest(unittest.TestCase):
         self.client = MongoClient('localhost', 27017)
         self.client.drop_database('test')
 
-    def __classFactor(self, privateDomain=False, privateRange=False):
+    def __classFactory__(self, privateDomain=False, privateRange=False):
         domainClass = None
         rangeClass = None
         if privateDomain:
@@ -59,22 +59,23 @@ class PropStoreTest(unittest.TestCase):
     def testCreatePublicAndGetPublicNode(self):
 
         def testCreate_PublicDomain_PublicProperty_PublicRange():
-            (publicDomain, publicRange) = self.__classFactor(False, False)
+            (publicDomain, publicRange) = self.__classFactory__(False, False)
             publicProp = self.publicPropStore.createPropertyNode('publilcProp1', publicDomain, publicRange)
+            print publicProp
             self.assertEqual(publicProp, self.publicPropStore.getPropertyNode(publicProp[ID_KEY]))
 
         def testCreate_PublicDomain_PublicProperty_PrivateRange():
-            (publicDomain, privateRange) = self.__classFactor(False, True)
+            (publicDomain, privateRange) = self.__classFactory__(False, True)
             publicProp = self.publicPropStore.createPropertyNode('publilcProp2', publicDomain, privateRange)
             self.assertEqual(publicProp, None)
 
         def testCreate_PrivateDomain_PublicProperty_PublicRange():
-            (privateDomain, publicRange) = self.__classFactor(True, False)
+            (privateDomain, publicRange) = self.__classFactory__(True, False)
             publicProp = self.publicPropStore.createPropertyNode('publilcProp3', privateDomain, publicRange)
             self.assertEqual(publicProp, None)
 
         def testCreate_PrivateDomain_PublicProperty_PrivateRange():
-            (privateDomain, privateRange) = self.__classFactor(True, True)
+            (privateDomain, privateRange) = self.__classFactory__(True, True)
             publicProp = self.publicPropStore.createPropertyNode('publilcProp4', privateDomain, privateRange)
             self.assertEqual(publicProp, None)
 
@@ -86,7 +87,7 @@ class PropStoreTest(unittest.TestCase):
     def testCreatePublicAndGetPrivateNode(self):
         def testCreate_PublicDomain_PublicProperty_PublicRange():
             userPropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
-            (publicDomain, publicRange) = self.__classFactor(False, False)
+            (publicDomain, publicRange) = self.__classFactory__(False, False)
             publicProp = self.publicPropStore.createPropertyNode('publilcProp', publicDomain, publicRange)
             self.assertEqual(publicProp, userPropStore.getPrivatePropertyNode(publicProp[NAME_NODE_ID_KEY], publicProp[ID_KEY]))
 
@@ -96,7 +97,7 @@ class PropStoreTest(unittest.TestCase):
         userPropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
         userClassStore = self.storeFactory.getPrivateClassStore(self.user1)
         def testCreate_PublicDomain_PrivateProperty_PublicRange():
-            (publicDomain, publicRange) = self.__classFactor(False, False)
+            (publicDomain, publicRange) = self.__classFactory__(False, False)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp', publicDomain, publicRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
             pcn = userClassStore.getPrivateClassNode(publicDomain[NAME_NODE_ID_KEY], publicDomain[ID_KEY])
@@ -106,7 +107,7 @@ class PropStoreTest(unittest.TestCase):
             self.assertEqual(pub.has_key('domain'), False)
 
         def testCreate_PublicDomain_PrivateProperty_PrivateRange():
-            (publicDomain, privateRange) = self.__classFactor(False, True)
+            (publicDomain, privateRange) = self.__classFactory__(False, True)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp2', publicDomain, privateRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
 
@@ -121,7 +122,7 @@ class PropStoreTest(unittest.TestCase):
             self.assertEqual(pd.has_key('domain'), False)
 
         def testCreate_PrivateDomain_PrivateProperty_PublicRange():
-            (privateDomain, publicRange) = self.__classFactor(True, False)
+            (privateDomain, publicRange) = self.__classFactory__(True, False)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp3', privateDomain, publicRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
 
@@ -136,7 +137,7 @@ class PropStoreTest(unittest.TestCase):
             self.assertEqual(pd.has_key('domain'), False)
 
         def testCreate_PrivateDomain_PrivateProperty_PrivateRange():
-            (privateDomain, privateRange) = self.__classFactor(True, True)
+            (privateDomain, privateRange) = self.__classFactory__(True, True)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp4', privateDomain, privateRange)
             self.assertEqual(self.publicPropStore.getPropertyNode(privateProp.get(ID_KEY)), None)
 
@@ -158,25 +159,25 @@ class PropStoreTest(unittest.TestCase):
     def testCreatePrivateAndGetPrivateNode(self):
         userPropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
         def testCreate_PublicDomain_PrivateProperty_PublicRange():
-            (publicDomain, publicRange) = self.__classFactor(False, False)
+            (publicDomain, publicRange) = self.__classFactory__(False, False)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp', publicDomain, publicRange)
             get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
 
         def testCreate_PublicDomain_PrivateProperty_PrivateRange():
-            (publicDomain, privateRange) = self.__classFactor(False, True)
+            (publicDomain, privateRange) = self.__classFactory__(False, True)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp2', publicDomain, privateRange)
             get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
 
         def testCreate_PrivateDomain_PrivateProperty_PublicRange():
-            (privateDomain, publicRange) = self.__classFactor(True, False)
+            (privateDomain, publicRange) = self.__classFactory__(True, False)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp3', privateDomain, publicRange)
             get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
 
         def testCreate_PrivateDomain_PrivateProperty_PrivateRange():
-            (privateDomain, privateRange) = self.__classFactor(True, True)
+            (privateDomain, privateRange) = self.__classFactory__(True, True)
             privateProp = userPropStore.createPrivatePropertyNode('privateProp4', privateDomain, privateRange)
             get =  userPropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY])
             self.assertEqual(get, privateProp)
@@ -189,7 +190,7 @@ class PropStoreTest(unittest.TestCase):
     def testSharePrivatePropertyNodeByOwner(self):
         user1PropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
         user2PropStore = self.storeFactory.getPrivatePropertyStore(self.user2)
-        (publicDomain, privateRange) = self.__classFactor(False, True)
+        (publicDomain, privateRange) = self.__classFactory__(False, True)
         privateProp = user1PropStore.createPrivatePropertyNode('privateProp2', publicDomain, privateRange)
         self.assertEqual(user2PropStore.getPrivatePropertyNode(privateProp[NAME_NODE_ID_KEY], privateProp[ID_KEY]), None)
         self.assertEqual(user1PropStore.sharePrivatePropertyNode(privateProp, self.user2), True)
@@ -198,13 +199,13 @@ class PropStoreTest(unittest.TestCase):
     def testSharePrivatePropertyNodeByNonOwner(self):
         user1PropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
         user2PropStore = self.storeFactory.getPrivatePropertyStore(self.user2)
-        (publicDomain, privateRange) = self.__classFactor(False, True)
+        (publicDomain, privateRange) = self.__classFactory__(False, True)
         privateProp = user1PropStore.createPrivatePropertyNode('privateProp2', publicDomain, privateRange)
         self.assertEqual(user2PropStore.sharePrivatePropertyNode(privateProp, None), False)
 
     def testSharePublicPropertyNode(self):
         userPropStore = self.storeFactory.getPrivatePropertyStore(self.user1)
-        (publicDomain, publicRange) = self.__classFactor(False, False)
+        (publicDomain, publicRange) = self.__classFactory__(False, False)
         publicProp = self.publicPropStore.createPropertyNode('publilcProp1', publicDomain, publicRange)
         self.assertEqual(userPropStore.sharePrivatePropertyNode(publicProp, self.user2), False)
 

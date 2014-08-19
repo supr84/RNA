@@ -7,6 +7,7 @@ from pymongo.mongo_client import MongoClient
 from src.store.dbConnection import DBConnection
 from src.store.nameStore import NameStore
 import unittest
+from src.store.constants import NAME_KEY, ID_KEY
 
 
 class NameStoreTest(unittest.TestCase):
@@ -24,6 +25,13 @@ class NameStoreTest(unittest.TestCase):
     def tearDownClass(self):
         self.client = MongoClient('localhost', 27017)
 #        self.client.drop_database('test')
+    def testGetName(self):
+        name = "test name Node"
+        nameNode = self.nameStore.createNameNode(name)
+        nn = self.nameStore.getNameNodeByName(name)
+        self.assertEqual(nn[NAME_KEY], name)
+        nn = self.nameStore.getNameNodeById(nameNode[ID_KEY])
+        self.assertEqual(nn[NAME_KEY], name)
 
     def testCLassStore(self):
         def testCreateNameNode():

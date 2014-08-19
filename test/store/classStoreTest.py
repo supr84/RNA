@@ -7,7 +7,7 @@ from pymongo.mongo_client import MongoClient
 from src.store.StoreFactory import StoreFactory
 from src.store.constants import ID_KEY, NAME_NODE_ID_KEY
 from src.store.dbConnection import DBConnection
-from src.store.userStore import USerStore
+from src.store.userStore import UserStore
 import unittest
 
 
@@ -21,7 +21,7 @@ class CLassStoreTest(unittest.TestCase):
         self.storeFactory = StoreFactory(dbConn, '/TalenticaWorkspace/TLabs/graphite-python/RNA/src/store/users')
         self.publicClassStore = self.storeFactory.publicClassStore
         self.publicPropStore = self.storeFactory.publicPropertyStore
-        self.userStore = USerStore(dbConn)
+        self.userStore = UserStore(dbConn)
         self.user1 = self.userStore.createUserNode("prasu05", "p$5%t")
         self.user2 = self.userStore.createUserNode("prasu06", "^%sf$")
         userClassStore = self.storeFactory.getPrivateClassStore(self.user1)

@@ -23,30 +23,40 @@ class PropertyStore(object):
         self.propNodes = dbConn.getDatabase()[PROPERTY_NODE_COLLECTION]
         self.classNodes = dbConn.getDatabase()[CLASS_NODE_COLLECTION]
         self.nameStore = NameStore(dbConn)
+        self.publicClassStore = None
 
     def __getNameNode__(self, propName):
         name = propName.lower()
         tokens = name.split()
         if len(tokens) != 1:
             raise PropertyNodeError('class node name should not contain white spaces', name)
-        nameNode = self.nameStore.getNameNode(name)
+        nameNode = self.nameStore.getNameNodeByName(name)
         if None == nameNode:
             nameNode = self.nameStore.createNameNode(name)
         return nameNode
 
-    def createPropertyNode(self, propName, domainClassNode, rangeClassNode):
-        domainClassNode = self.publicClassStore.getClassNode(domainClassNode.get(ID_KEY))
-        rangeClassNode = self.publicClassStore.getClassNode(rangeClassNode.get(ID_KEY))
-        if None == domainClassNode or None == rangeClassNode:
+    def createPropertyNode(self, propName, domainClassNode, rangeClassNode=None):
+        if None == propName or None == domainClassNode:
             return None
+        dcn = self.publicClassStore.getClassNode(domainClassNode.get(ID_KEY))
+        if None == dcn:
+            return None
+        hasRange = False
         nameNode = self.__getNameNode__(propName)
         propertyNode = {NAME_NODE_ID_KEY:nameNode[ID_KEY],
-                        RANGE_KEY:rangeClassNode[ID_KEY],
-                        DOMAIN_KEY:[domainClassNode[ID_KEY], ]}
+                        DOMAIN_KEY:[dcn[ID_KEY], ]}
+        if None != rangeClassNode:
+            rcn = self.publicClassStore.getClassNode(rangeClassNode.get(ID_KEY))
+            if None == rcn:
+                return None
+            propertyNode[RANGE_KEY] = rcn[ID_KEY]
+            hasRange = True
+
         propNodeId = self.propNodes.insert(propertyNode)
         propertyNode[ID_KEY] = ObjectId(propNodeId)
-        self.publicClassStore.addDomain(domainClassNode, propertyNode)
-        self.publicClassStore.addRange(rangeClassNode, propertyNode)
+        self.publicClassStore.addDomain(dcn, propertyNode)
+        if hasRange:
+            self.publicClassStore.addRange(rcn, propertyNode)
         return propertyNode
 
     def getPropertyNode(self, propNodeId):
@@ -65,13 +75,11 @@ class PropertyStore(object):
                                         { '$addToSet': { DOMAIN_KEY: domainClassNode[ID_KEY] } })
         return updated[UPDATED_EXISTING_KEY]
 
-    def addValLink(self, nameNodeId, valNodeId):
-        nameNode = self.nameStore.getNameNodeById(nameNodeId)
-        if None == nameNode:
+    def addValLink(self, propNode, valNode):
+        if None == propNode or None == valNode:
             return False
-        names = nameNode[PROP_NAME_KEY]
-        for name in names:
-            propNode = self.propNodes.find_one({ID_KEY:name})
-            if None != propNode:
-                self.propNodes.update({ID_KEY:propNode[ID_KEY]}, { '$addToSet': { PROP_VALUE_KEY: valNodeId } })
-                return True
+        pn = self.getPropertyNode(propNode[ID_KEY])
+        if None == pn:
+            return False
+        updated = self.propNodes.update({ID_KEY:pn[ID_KEY]}, { '$addToSet': { PROP_VALUE_KEY: valNode[ID_KEY] } })
+        return updated[UPDATED_EXISTING_KEY]
